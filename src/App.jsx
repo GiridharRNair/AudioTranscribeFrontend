@@ -28,7 +28,7 @@ function App() {
       const response = await axios.post(`${import.meta.env.VITE_FLASK_BACKEND}/transcribe`, formData); 
 
       if (response.status === 200) {
-        toast.success(response.data.message, {
+        toast.success("Transcription Request Successful. Expect an Email Shortly.", {
           position: 'top-right',
           autoClose: 5000,
           hideProgressBar: false,
