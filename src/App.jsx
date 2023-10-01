@@ -25,19 +25,19 @@ function App() {
     formData.append('email', email);
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_FLASK_BACKEND}/transcribe`, formData); 
+      // Show success toast before making the Axios request
+      toast.success("Transcription Request Successful. Expect an Email Shortly.", {
+        position: 'top-right',
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
 
-      if (response.status === 200) {
-        toast.success("Transcription Request Successful. Expect an Email Shortly.", {
-          position: 'top-right',
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-        console.log('File and email submitted successfully');
-      } else {
+      const response = await axios.post(`${import.meta.env.VITE_FLASK_BACKEND}/transcribe`, formData);
+
+      if (response.data.error) {
         toast.error(response.data.error, {
           position: 'top-right',
           autoClose: 5000,
