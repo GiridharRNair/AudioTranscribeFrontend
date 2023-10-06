@@ -4,14 +4,46 @@ import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { Typewriter } from 'react-simple-typewriter';
 
+const currStatus = ['Submitting', 'Submitting.', 'Submitting..', ' Submitting...'];
+
 function App() {
-  const [audioFile, setAudioFile] = useState(null);
+  const [file, setFile] = useState(null);
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [status, setStatus] = useState('Submit');
+
+  let intervalId;
+  var statusChange = 0;
+
+  function statusUpdate () {
+    if (statusChange === 0) {
+      setStatus(currStatus[0]);
+      statusChange++;
+    } else if (statusChange === 1) {
+      statusChange++;
+      setStatus(currStatus[1]);
+    } else if (statusChange === 2) {
+      statusChange++;
+      setStatus(currStatus[2]);
+    } else {
+      statusChange = 0;
+      setStatus(currStatus[3]);
+    }
+  }
+
+  function startInterval () {
+    setLoading(true);
+    intervalId = setInterval(statusUpdate, 300);
+  }
+
+  function stopInterval () {
+    setLoading(false);
+    clearInterval(intervalId);
+  }
 
   const handleAudioFileChange = (e) => {
     const file = e.target.files[0];
-    setAudioFile(file);
+    setFile(file);
   };
 
   const handleEmailChange = (e) => {
@@ -19,11 +51,11 @@ function App() {
   };
 
   const handleSubmit = async (e) => {
-    setLoading(true);
     e.preventDefault();
+    startInterval();
 
     const formData = new FormData();
-    formData.append('file', audioFile);
+    formData.append('file', file);
     formData.append('email', email);
 
     try {
@@ -37,7 +69,7 @@ function App() {
           draggable: true,
         });
     } catch (error) {
-      toast.error(response.data.error, {
+      toast.error(error, {
         position: 'top-right',
         autoClose: 5000,
         hideProgressBar: false,
@@ -45,12 +77,13 @@ function App() {
         pauseOnHover: true,
         draggable: true,
       });
+    } finally {
+      stopInterval();
     }
-    setLoading(false);
   };
 
   return (
-    <div className="flex justify-center items-center h-screen flex-col my-12 px-5">
+    <div className="flex justify-center items-center h-screen flex-col px-5">
       <div style={{ fontSize: 25, fontWeight: 'bold' }}>
         <Typewriter
           words={['TalkToText', 'Try it now!']}
@@ -87,13 +120,11 @@ function App() {
             loading ? 'bg-gray-400 text-gray-600 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-700 active:bg-blue-800'
           } text-white p-2 rounded-md`}
         >
-          Submit
+          {status}
         </button>
       </form>
-      <div className="w-full mt-4 px-4 md:px-96 lg:px-96">
-        <p className='text-center px-0 md:px-16'>
-          The audio transcription app with AI-powered summarization, key points, action items, and sentiment analysis. Perfect for professionals and students.
-        </p>
+      <div className="pt-5 text-center">
+          AI-powered transcription, summarization, key points, action items, and sentiment analysis. <br/> Perfect for professionals and students.
       </div>
       <ToastContainer />
     </div>
