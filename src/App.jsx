@@ -39,6 +39,7 @@ function App() {
   function stopInterval () {
     setLoading(false);
     clearInterval(intervalId);
+    setStatus('Submit');
   }
 
   const handleAudioFileChange = (e) => {
