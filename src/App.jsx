@@ -12,7 +12,7 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [status, setStatus] = useState('Submit');
 
-  let intervalId;
+  let intervalId; 
   var statusChange = 0;
 
   function statusUpdate () {
